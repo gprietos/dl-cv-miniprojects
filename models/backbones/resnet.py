@@ -123,6 +123,22 @@ class ResNet(nn.Module):
         return nn.Sequential(*layers)        
 
 
+    def freeze(self):
+        for p in self.parameters():
+            p.requires_grad = False
+
+    def unfreeze(self):
+        for p in self.parameters():
+            p.requires_grad = True
+
+    def freeze_stages(self, stages):
+        for stage in stages:
+            module = getattr(self, stage)
+
+            for p in module.parameters():
+                p.requires_grad = False
+
+
     def forward(self, x):
         x = self.conv1(x)
         x = self.bn1(x)
