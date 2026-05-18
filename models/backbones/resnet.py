@@ -3,8 +3,10 @@ import torch.nn as nn
 from ..base import BackboneOutput
 
 class BasicBlock(nn.Module):
+    expansion = 1
     
     def __init__(self, in_channels, out_channels, stride=1, downsample=None):
+
         super().__init__()
 
         self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=stride, padding=1, bias=False)  # bias=False (BatchNorm will handle the bias)
@@ -36,12 +38,12 @@ class BasicBlock(nn.Module):
 
 
 class BottleneckBlock(nn.Module):
+    expansion = 4
 
     def __init__(self, in_channels, out_channels, stride=1, downsample=None):
-        super().__init__()
+        mid_channels = out_channels // self.expansion
 
-        expansion = 4
-        mid_channels = out_channels // expansion
+        super().__init__()
 
         # 1x1: compress
         self.conv1 = nn.Conv2d(in_channels, mid_channels, kernel_size=1, stride=1, bias=False)
@@ -96,14 +98,16 @@ class ResNet(nn.Module):
         # Pooling 
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
 
+        self.out_features = 512 * block.expansion
+
 
     def _make_layer(self, block, out_channels, num_blocks, stride):
-        # This helper builds one group of `num_blocks` BasicBlocks.
+        # This helper builds one group of num_blocks BasicBlocks.
 
-        if stride != 1 or self.in_channels != out_channels:
+        if stride != 1 or self.in_channels != out_channels * block.expansion:
             downsample = nn.Sequential(
-                nn.Conv2d(self.in_channels, out_channels, kernel_size=1, stride=stride, bias=False),
-                nn.BatchNorm2d(out_channels)
+                nn.Conv2d(self.in_channels, out_channels * block.expansion, kernel_size=1, stride=stride, bias=False),
+                nn.BatchNorm2d(out_channels * block.expansion)
             )
         else:
             downsample = None
@@ -111,11 +115,10 @@ class ResNet(nn.Module):
         layers = []
 
         layers.append(block(self.in_channels, out_channels, stride, downsample))
-        self.in_channels = out_channels
+        self.in_channels = out_channels * block.expansion
 
         for _ in range(num_blocks-1):
             layers.append(block(self.in_channels, out_channels, stride=1, downsample=None))
-            self.in_channels = out_channels
 
         return nn.Sequential(*layers)        
 
