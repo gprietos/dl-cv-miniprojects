@@ -13,7 +13,7 @@ def get_classification_transforms(split: str, img_size: int=224, backbone: str="
         return transforms.Compose([
             transforms.Resize(img_size + 32, interpolation=transforms.InterpolationMode.BICUBIC),
             transforms.CenterCrop(img_size),
-            transforms.ToImage,
+            transforms.ToImage(),
             transforms.ToDtype(torch.float32, scale=True),
             transforms.Normalize(IMAGE_NET_MEAN, IMAGE_NET_STD)
         ])
