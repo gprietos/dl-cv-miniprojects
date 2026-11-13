@@ -1,0 +1,68 @@
+dataset:
+  dataset_path:    '/home/gprietos/AI/Datasets/image_classification/mini-imagenet'
+
+
+# reporting:
+#   iter_print:          10
+#   iter_bet_eval:       20
+#   iter_per_eval:       5
+#   save_iter:           None
+#   save_epoch:          5
+#   wandb_log:           True
+#   wandb_project:       'Workshop'
+#   log_level:           'INFO'    # DEBUG, INFO, WARNING, ERROR, CRITICAL
+
+# data_augmentation:
+#   augmentations:      'context_prediction_windows'
+#   num_preds:          3
+#   img_size:           224
+#   patch_size:         16
+#   context_ratios:     [0.5, 0.75]
+#   pred_ratios:        [0.1, 0.3]
+#   # Augmentations previous to context and prediction windows. 
+#   crops_scale:        [0.5, 1.0]
+#   aspect_ratio:       [0.75, 1.33]
+#   views:              4
+
+train:
+  grad_accum_steps: 1
+  batch_size:       256
+  epochs:           100
+  # Optimizer.
+  base_lr:          0.0001
+  weight_decay:     1.0e-6
+  # spectral:         False
+  optimizer:        'AdamW'   # 'AdamW', 'LARS', 'SGD', 'Muon'
+  # Clip gradients.
+  clip_grad:        True
+  max_grad_norm:    1.0
+  # Number of slices & points for SIGReg.
+  # num_slices:       256
+  # num_points:       17
+
+model:
+  backbone_name:       'resnet18'
+  compile_model:        False
+  # Precision
+  dtype:               'bfloat16'
+
+# model:
+#   # Model architecture.
+#   backbone_name:       'vit_base'
+#   patch_size:          16
+#   base_dim:            768
+#   droppath_rate:       0.1
+#   drop_rate:           0.0
+#   attdrop_rate:        0.0
+#   expansion_rate:      0.375
+#   num_classes:         768
+#   use_cls_token:       False
+#   normlayer:          'LayerNorm'
+#   projector_dims:     '768-768-64'
+#   pro_normlayer:       'BatchNorm1d'
+#   # Precision.
+#   dtype:               'bfloat16'
+#   # SSL Method.
+#   ssl_method:         'LeIJEPA'
+#   representation_loss: 0.95
+#   sigreg_loss:         0.05

@@ -1,1 +1,6 @@
-__pycache__
+__pycache__/
+*.pt
+*.pth
+*.ckpt
+mlruns/
+.ipynb_checkpoints/
